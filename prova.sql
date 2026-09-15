@@ -175,13 +175,39 @@ inner join cliente c on r.cliente_id=c.id;
 --seleciona o nome do cliente, o id do passeio, seus status, o nome de passeio e a datade saída e retorno
 select c.nome, r.id, r.status, p.nome, p.data_hora_saida, p.data_hora_retorno
 from cliente c
-inner join passeios p on reserva_passeios.passeios_id=p.id
-inner join reserva_passeios rp on reserva.id=rp.reserva_id
-inner join reserva r on c.id=r.cliente_id;
+inner join reserva r on c.id=r.cliente_id
+inner join reserva_passeios rp on r.id=rp.reserva_id
+inner join passeios p on rp.passeios_id=p.id;
 
 --seleciona o nome do cliente, o id do passeio, seus status, o nome de passeio e a datade saída e retorno com 
 select c.nome, r.id, r.status, p.nome, p.data_hora_saida, p.data_hora_retorno
 from cliente c
-inner join passeios p on reserva_passeios.passeios_id=p.id
-inner join reserva_passeios rp on reserva.id=rp.reserva_id
-inner join reserva r on c.id=r.cliente_id;
+inner join reserva r on c.id=r.cliente_id
+inner join reserva_passeios rp on r.id=rp.reserva_id
+inner join passeios p on rp.passeios_id=p.id
+where status='CONFIRMADA' and duracao_horas>=8 and cliente_id>=1;
+
+--seleciona o nome dos clientes e a quantidade de reservas realizadas por eles
+select c.nome, count(r.id)
+from cliente c
+inner join reserva r on c.id=r.cliente_id
+group by c.nome, r.id
+order by cliente asc;
+
+-- seleciona o nome do passeio e a quantidade de clientes relacionados a ele
+select p.nome, count(r.cliente_id)
+from passeios p
+inner join reserva_passeios rp on p.id=rp.passeios_id
+inner join reserva r on rp.reserva_id=r.id
+group by p.nome, r.cliente_id
+order by nome desc;
+
+--consulta nome do cliente, e-mail, código da reserva, status, nome do passeio, data e hora de saida e retorno e duracao em horas com status de confirmada e duracao em horas maior ou igual a 8
+de saída, data e hora de retorno e duração em horas.
+select c.nome, c.email, r.id, r.status, p.nome, p.data_hora_saida, p.data_hora_retorno, p.duracao_horas
+from cliente c
+inner join reserva r on c.id=r.cliente_id
+inner join reserva_passeios rp on r.id=rp.reserva_id
+inner join passeios p on rp.passeios_id=p.id
+where r.status='CONFIRMADA' and p.duracao_horas>=8;
+
